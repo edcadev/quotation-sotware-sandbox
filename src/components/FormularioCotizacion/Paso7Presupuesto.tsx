@@ -2,22 +2,52 @@
 
 import type React from "react";
 import { useFormContext } from "react-hook-form";
-import { DollarSign, Clock, Calendar, AlertCircle, FileText } from "lucide-react";
+import {
+  DollarSign,
+  Clock,
+  Calendar,
+  AlertCircle,
+  FileText,
+} from "lucide-react";
 import type { FormularioCompleto } from "./schemas";
 
 const rangosPresupuesto = [
-  { value: "menos-10k", label: "Menos de €10,000", descripcion: "Proyecto pequeño" },
-  { value: "10k-25k", label: "€10,000 - €25,000", descripcion: "Proyecto mediano" },
-  { value: "25k-50k", label: "€25,000 - €50,000", descripcion: "Proyecto grande" },
-  { value: "50k-100k", label: "€50,000 - €100,000", descripcion: "Proyecto empresarial" },
-  { value: "100k+", label: "Más de €100,000", descripcion: "Proyecto corporativo" },
+  {
+    value: "menos-10k",
+    label: "Menos de S/. 10,000",
+    descripcion: "Proyecto pequeño",
+  },
+  {
+    value: "10k-25k",
+    label: "S/. 10,000 - S/. 25,000",
+    descripcion: "Proyecto mediano",
+  },
+  {
+    value: "25k-50k",
+    label: "S/. 25,000 - S/. 50,000",
+    descripcion: "Proyecto grande",
+  },
+  {
+    value: "50k-100k",
+    label: "S/. 50,000 - S/. 100,000",
+    descripcion: "Proyecto empresarial",
+  },
+  {
+    value: "100k+",
+    label: "Más de S/. 100,000",
+    descripcion: "Proyecto corporativo",
+  },
 ];
 
 const tiemposEstimados = [
   { value: "1-3meses", label: "1-3 meses", descripcion: "Desarrollo rápido" },
   { value: "3-6meses", label: "3-6 meses", descripcion: "Desarrollo estándar" },
   { value: "6-12meses", label: "6-12 meses", descripcion: "Proyecto complejo" },
-  { value: "12meses+", label: "Más de 12 meses", descripcion: "Proyecto a largo plazo" },
+  {
+    value: "12meses+",
+    label: "Más de 12 meses",
+    descripcion: "Proyecto a largo plazo",
+  },
 ];
 
 const nivelesPrioridad = [
@@ -31,13 +61,15 @@ const nivelesPrioridad = [
     value: "media",
     label: "Media",
     descripcion: "Importante pero flexible",
-    color: "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700",
+    color:
+      "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700",
   },
   {
     value: "alta",
     label: "Alta",
     descripcion: "Necesario pronto",
-    color: "bg-orange-50 dark:bg-orange-900/20 border-orange-300 dark:border-orange-700",
+    color:
+      "bg-orange-50 dark:bg-orange-900/20 border-orange-300 dark:border-orange-700",
   },
   {
     value: "urgente",
@@ -93,7 +125,8 @@ export default function Paso7Presupuesto() {
           ))}
         </div>
         <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-          Esta información nos ayuda a preparar una propuesta adecuada a tus expectativas
+          Esta información nos ayuda a preparar una propuesta adecuada a tus
+          expectativas
         </p>
       </div>
 
@@ -110,7 +143,8 @@ export default function Paso7Presupuesto() {
               Mi presupuesto es flexible
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Estoy abierto a ajustar el presupuesto según las necesidades del proyecto
+              Estoy abierto a ajustar el presupuesto según las necesidades del
+              proyecto
             </span>
           </div>
         </label>
@@ -223,7 +257,8 @@ export default function Paso7Presupuesto() {
           placeholder="Comparte cualquier información adicional que consideres relevante para la cotización..."
         />
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          Restricciones técnicas, preferencias de metodología de trabajo, requisitos especiales, etc.
+          Restricciones técnicas, preferencias de metodología de trabajo,
+          requisitos especiales, etc.
         </p>
       </div>
     </div>
