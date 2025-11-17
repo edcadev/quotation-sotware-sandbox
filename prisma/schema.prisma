@@ -1,0 +1,294 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// MODELO PRINCIPAL - COTIZACIÓN
+// ============================================
+
+model Cotizacion {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Información básica del cliente
+  nombreCliente    String
+  emailCliente     String
+  empresaCliente   String?
+  telefonoCliente  String?
+
+  // Estado de la cotización
+  estado EstadoCotizacion @default(BORRADOR)
+
+  // Notas internas
+  notasInternas String? @db.Text
+
+  // Relaciones con las 7 categorías
+  objetivosVision          ObjetivosVision?
+  usuariosRoles            UsuariosRoles?
+  alcanceFuncionalidades   AlcanceFuncionalidades?
+  requerimientosTecnicos   RequerimientosTecnicos?
+  integraciones            Integraciones?
+  disenoUX                 DisenoUX?
+  presupuestoTiempos       PresupuestoTiempos?
+
+  @@map("cotizaciones")
+}
+
+enum EstadoCotizacion {
+  BORRADOR
+  ENVIADA
+  EN_REVISION
+  APROBADA
+  RECHAZADA
+  CANCELADA
+}
+
+enum Plataforma {
+  WEB
+  MOBILE_IOS
+  MOBILE_ANDROID
+  DESKTOP_WINDOWS
+  DESKTOP_MAC
+  DESKTOP_LINUX
+  PROGRESSIVE_WEB_APP
+}
+
+enum TipoMoneda {
+  USD  // Dólar estadounidense
+  EUR  // Euro
+  MXN  // Peso mexicano
+  COP  // Peso colombiano
+  ARS  // Peso argentino
+  CLP  // Peso chileno
+  PEN  // Sol peruano
+}
+
+// ============================================
+// 1. OBJETIVOS Y VISIÓN DEL PROYECTO
+// ============================================
+
+model ObjetivosVision {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿Cuál es el problema principal que este software busca resolver?
+  problemaPrincipal String @db.Text
+
+  // ¿Qué se habría logrado si el proyecto fuera un éxito total?
+  objetivoPrincipal String @db.Text
+
+  // ¿Cómo se está manejando este problema o proceso actualmente?
+  procesoActual String? @db.Text
+
+  // ¿Existen aplicaciones o sitios web similares?
+  competenciaReferencia String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("objetivos_vision")
+}
+
+// ============================================
+// 2. USUARIOS Y ROLES
+// ============================================
+
+model UsuariosRoles {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿Quiénes son los usuarios finales del software?
+  usuariosFinales String @db.Text
+
+  // ¿Existirán diferentes tipos de usuarios con distintos permisos?
+  tiposRoles String? @db.Text
+
+  // ¿Descripción de los roles y sus permisos?
+  descripcionRoles String? @db.Text
+
+  // ¿Cantidad de usuarios estimada?
+  cantidadUsuarios String?
+
+  // Escala: PEQUENA (1-50), MEDIANA (51-500), GRANDE (500-5000), MUY_GRANDE (5000+)
+  escalaUsuarios EscalaUsuarios?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("usuarios_roles")
+}
+
+enum EscalaUsuarios {
+  PEQUENA          // 1-50 usuarios
+  MEDIANA          // 51-500 usuarios
+  GRANDE           // 501-5000 usuarios
+  MUY_GRANDE       // 5000+ usuarios
+}
+
+// ============================================
+// 3. ALCANCE Y FUNCIONALIDADES
+// ============================================
+
+model AlcanceFuncionalidades {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿Cuáles son las 3 a 5 funcionalidades absolutamente esenciales?
+  funcionalidadesClave String @db.Text
+
+  // ¿Descripción del flujo principal de usuario (camino feliz)?
+  flujosPrincipales String @db.Text
+
+  // ¿Qué funcionalidades son críticas para Fase 1 (MVP)?
+  funcionalidadesFase1 String? @db.Text
+
+  // ¿Qué funcionalidades pueden esperar para Fase 2?
+  funcionalidadesFase2 String? @db.Text
+
+  // ¿Qué NO incluye el proyecto?
+  fueraDeAlcance String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("alcance_funcionalidades")
+}
+
+// ============================================
+// 4. REQUERIMIENTOS TÉCNICOS Y PLATAFORMA
+// ============================================
+
+model RequerimientosTecnicos {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿Dónde debe funcionar el software? (Web, Móvil, Escritorio)
+  plataformas Plataforma[]
+
+  // Descripción de plataformas específicas
+  detallesPlataforma String? @db.Text
+
+  // ¿Dónde se alojará la aplicación?
+  hosting String? @db.Text
+
+  // ¿Preferencias o restricciones tecnológicas?
+  tecnologias String? @db.Text
+
+  // ¿Requisitos especiales de rendimiento?
+  requisitoRendimiento String? @db.Text
+
+  // ¿Requisitos especiales de seguridad?
+  requisitoSeguridad String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("requerimientos_tecnicos")
+}
+
+// ============================================
+// 5. INTEGRACIONES Y DATOS
+// ============================================
+
+model Integraciones {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿El software necesita conectarse con sistemas externos?
+  sistemasExternos String? @db.Text
+
+  // ¿Necesita integrarse con APIs de terceros?
+  apisTerceros String? @db.Text
+
+  // ¿Existe información que necesite ser migrada?
+  migracionDatos String? @db.Text
+
+  // ¿Qué tipo de reportes o dashboards necesitan?
+  reportes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("integraciones")
+}
+
+// ============================================
+// 6. DISEÑO (UI/UX) Y ENTREGABLES
+// ============================================
+
+model DisenoUX {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿Ya cuentan con diseño de las pantallas (mockups, prototipos)?
+  tieneDisenoVisual Boolean @default(false)
+  disenoVisualUrl   String? // URL a Figma, Sketch, etc.
+
+  // ¿Tienen un manual de marca?
+  tieneGuiaEstilo Boolean @default(false)
+  guiaEstilo      String? @db.Text
+
+  // ¿Esperan que se cree el diseño desde cero?
+  requiereDiseno Boolean @default(false)
+
+  // ¿Qué entregables esperan? (Código, documentación, manuales, etc.)
+  entregables String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("diseno_ux")
+}
+
+// ============================================
+// 7. PRESUPUESTO, TIEMPOS Y MANTENIMIENTO
+// ============================================
+
+model PresupuestoTiempos {
+  id            String     @id @default(cuid())
+  cotizacionId  String     @unique
+  cotizacion    Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+
+  // ¿Existe un rango de presupuesto definido?
+  tienePresupuesto Boolean @default(false)
+  presupuestoMin   Decimal? @db.Decimal(10, 2)
+  presupuestoMax   Decimal? @db.Decimal(10, 2)
+  moneda           TipoMoneda? @default(USD)
+
+  // ¿Tienen una fecha límite innegociable?
+  tieneFechaLimite Boolean @default(false)
+  fechaLimite      DateTime?
+
+  // ¿Razón de la fecha límite?
+  razonFechaLimite String? @db.Text
+
+  // ¿Quién se encargará del mantenimiento?
+  planMantenimiento String? @db.Text
+
+  // ¿Quién es el punto de contacto principal (Product Owner)?
+  nombreDecidor    String?
+  cargoDecidor     String?
+  contactoDecidor  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("presupuesto_tiempos")
+}
